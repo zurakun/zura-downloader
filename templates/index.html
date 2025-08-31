@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZSZ Downloader</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="wrapper">
+    <h1>ZSZ Downloader</h1>
+    <p>Paste URL video Instagram, Facebook & TikTok.</p>
+
+    <div class="form-box">
+      <input type="text" id="url" placeholder="Tempel link di sini...">
+      <button id="main-button" onclick="getVideoInfo()">Cari Pilihan</button>
+    </div>
+
+    <div class="status-box">
+      <p id="status">Menunggu dia yang tidak pasti...</p>
+    </div>
+
+    <div id="download-options" class="hidden">
+      <div class="option-group">
+        <select id="resolution-select"></select>
+        <button id="download-mp4-btn">Unduh MP4</button>
+      </div>
+      <div class="option-group">
+         <button id="download-mp3-btn">Unduh (MP3)</button>
+      </div>
+    </div>
+  </div>
+ <footer>
+    <p>Copyright © <span id="copyright-year"></span> ZSZ Downloader. All Rights Reserved.</p>
+  </footer>
+  <script src="/static/script.js"></script>
+</body>
+</html>

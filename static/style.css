@@ -1,0 +1,171 @@
+/* File: static/style.css (Dark Purple Neon Theme - v2 REVISED) */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap');
+
+:root {
+  --neon-purple: #9D4EDD;
+  --neon-pink: #F72585;
+  --dark-bg-start: #0B021A;
+  --dark-bg-end: #1E053A;
+  --panel-bg: rgba(20, 10, 45, 0.8); /* Background panel dengan transparansi */
+  --light-text: #F0F0F0;
+  --border-glow: rgba(157, 78, 221, 0.7);
+  --font-title: 'Orbitron', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  /* Gradient untuk background yang lebih hidup */
+  background: linear-gradient(135deg, var(--dark-bg-start), var(--dark-bg-end));
+  background-attachment: fixed;
+  color: var(--light-text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.wrapper {
+  background: var(--panel-bg);
+  backdrop-filter: blur(10px); /* Efek glassmorphism/kaca buram */
+  -webkit-backdrop-filter: blur(10px);
+  padding: 30px 40px;
+  border-radius: 16px;
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 0 15px var(--border-glow), inset 0 0 10px rgba(157, 78, 221, 0.3);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+h1 {
+  font-family: var(--font-title);
+  color: #fff;
+  font-size: 2.2em;
+  text-shadow: 0 0 5px #fff, 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+  margin-bottom: 10px;
+}
+
+p {
+  color: #ccc;
+  font-size: 0.95em;
+  margin-bottom: 25px;
+}
+
+.form-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-box input[type="text"] {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: var(--light-text);
+  font-size: 1em;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-box input[type="text"]:focus {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 10px var(--neon-pink);
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+  background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+  color: white;
+  box-shadow: 0 0 10px rgba(247, 37, 133, 0.5);
+  text-transform: uppercase;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px var(--neon-pink);
+}
+
+button:disabled {
+  background: #333;
+  color: #777;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.status-box {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-glow);
+  word-wrap: break-word; /* Agar teks panjang tidak keluar box */
+}
+
+#status {
+  margin: 0;
+  color: #ddd;
+}
+
+/* Download Options Section */
+.hidden {
+  display: none !important;
+}
+
+#download-options {
+  margin-top: 25px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border: 1px solid var(--border-glow);
+}
+
+.option-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.option-group select {
+  flex: 1;
+  padding: 10px 15px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: var(--light-text);
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  font-size: 1em;
+  outline: none;
+}
+
+.option-group select:focus {
+  border-color: var(--neon-pink);
+}
+
+/* Styling untuk Copyright Footer */
+footer {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+footer p {
+  font-size: 0.8em;
+  color: #888;
+  letter-spacing: 1px;
+}

@@ -1,8 +1,9 @@
-# File: app.py (Versi Baru untuk MP3 & MP4)
+# File: app.py (Versi Baru untuk MP3 & MP4 + Cek FFmpeg)
 
 from flask import Flask, render_template, request, jsonify, send_file
 import yt_dlp
 import os
+import subprocess  # buat cek ffmpeg version
 
 app = Flask(__name__)
 TEMP_DIR = "temp_downloads"
@@ -85,6 +86,15 @@ def download_video():
         return send_file(filename, as_attachment=True)
     except Exception as e:
         return f"Terjadi error: {str(e)}", 500
+
+# Route tambahan buat cek versi FFmpeg
+@app.route('/ffmpeg-version')
+def ffmpeg_version():
+    try:
+        version = subprocess.getoutput("ffmpeg -version")
+        return f"<pre>{version}</pre>"
+    except Exception as e:
+        return f"Error cek FFmpeg: {str(e)}", 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

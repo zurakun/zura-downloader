@@ -1,8 +1,9 @@
-# File: app.py (Versi Baru untuk MP3 & MP4 + Proxy)
+# File: app.py (Versi Baru untuk MP3 & MP4 + Proxy + Auto Remove WM)
 
 from flask import Flask, render_template, request, jsonify, send_file
 import yt_dlp
 import os
+import subprocess
 
 app = Flask(__name__)
 TEMP_DIR = "temp_downloads"
@@ -73,20 +74,37 @@ def download_video():
                     'preferredquality': '192',
                 }],
             }
-        else:
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                filename = ydl.prepare_filename(info)
+                filename = os.path.splitext(filename)[0] + '.mp3'
+
+            return send_file(filename, as_attachment=True)
+
+        else:  # Tipe video
             ydl_opts = {
                 'format': format_id,
                 'outtmpl': os.path.join(TEMP_DIR, '%(title)s.%(ext)s'),
                 'proxy': PROXY
             }
 
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-            filename = ydl.prepare_filename(info)
-            if dl_type == 'audio':
-                filename = os.path.splitext(filename)[0] + '.mp3'
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                filename = ydl.prepare_filename(info)
 
-        return send_file(filename, as_attachment=True)
+            # Buat file baru hasil filter tanpa watermark
+            clean_filename = os.path.splitext(filename)[0] + "_clean.mp4"
+
+            # FFmpeg delogo (posisi WM: x=10, y=10, w=150, h=50)
+            subprocess.run([
+                "ffmpeg", "-y", "-i", filename,
+                "-vf", "delogo=x=10:y=10:w=150:h=50:show=0",
+                "-c:a", "copy", clean_filename
+            ])
+
+            return send_file(clean_filename, as_attachment=True)
+
     except Exception as e:
         return f"Terjadi error: {str(e)}", 500
 

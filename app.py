@@ -1,13 +1,15 @@
-# File: app.py (Versi Baru untuk MP3 & MP4 + Cek FFmpeg)
+# File: app.py (Versi Baru untuk MP3 & MP4 + Proxy)
 
 from flask import Flask, render_template, request, jsonify, send_file
 import yt_dlp
 import os
-import subprocess  # buat cek ffmpeg version
 
 app = Flask(__name__)
 TEMP_DIR = "temp_downloads"
 os.makedirs(TEMP_DIR, exist_ok=True)
+
+# Proxy (ubah di sini kalau proxy baru)
+PROXY = "http://128.199.202.122:8080"
 
 @app.route('/')
 def index():
@@ -19,7 +21,11 @@ def get_info():
     if not url:
         return jsonify({'error': 'URL tidak boleh kosong'}), 400
 
-    ydl_opts = {'quiet': True, 'no_warnings': True}
+    ydl_opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'proxy': PROXY
+    }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -27,18 +33,15 @@ def get_info():
             audio_formats = []
             
             for f in info.get('formats', []):
-                # Opsi Video (MP4 dengan video & audio)
                 if f.get('vcodec') != 'none' and f.get('acodec') != 'none' and f.get('ext') == 'mp4':
                     formats.append({
                         'format_id': f.get('format_id'),
                         'resolution': f.get('resolution'),
                         'filesize_human': f.get('filesize_approx_str') or 'N/A'
                     })
-                # Opsi Audio terbaik (untuk konversi MP3)
                 if f.get('vcodec') == 'none' and f.get('acodec') != 'none':
                     audio_formats.append(f)
 
-            # Cari audio dengan kualitas terbaik untuk dijadikan MP3
             best_audio = max(audio_formats, key=lambda x: x.get('abr', 0), default=None)
             
             return jsonify({
@@ -60,41 +63,32 @@ def download_video():
 
     try:
         if dl_type == 'audio':
-            # Opsi untuk ekstrak audio ke MP3
             ydl_opts = {
                 'format': format_id,
                 'outtmpl': os.path.join(TEMP_DIR, '%(title)s.%(ext)s'),
+                'proxy': PROXY,
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
-                    'preferredquality': '192', # Kualitas MP3 192kbps
+                    'preferredquality': '192',
                 }],
             }
-        else: # Tipe video
+        else:
             ydl_opts = {
                 'format': format_id,
                 'outtmpl': os.path.join(TEMP_DIR, '%(title)s.%(ext)s'),
+                'proxy': PROXY
             }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             filename = ydl.prepare_filename(info)
-            # Jika audio, nama file diubah dari .webm/.m4a menjadi .mp3
             if dl_type == 'audio':
                 filename = os.path.splitext(filename)[0] + '.mp3'
 
         return send_file(filename, as_attachment=True)
     except Exception as e:
         return f"Terjadi error: {str(e)}", 500
-
-# Route tambahan buat cek versi FFmpeg
-@app.route('/ffmpeg-version')
-def ffmpeg_version():
-    try:
-        version = subprocess.getoutput("ffmpeg -version")
-        return f"<pre>{version}</pre>"
-    except Exception as e:
-        return f"Error cek FFmpeg: {str(e)}", 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
